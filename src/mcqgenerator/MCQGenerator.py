@@ -6,21 +6,18 @@ import traceback
 import PyPDF2                       # type: ignore
 from dotenv import load_dotenv
 #Importing necessary packages
-from langchain_community.llms import HuggingFaceHub # type: ignore
+#from langchain_community.llms import HuggingFaceHub # type: ignore
 from langchain.prompts import PromptTemplate # type: ignore
 from langchain.chains import LLMChain # type: ignore
 from langchain.chains import SequentialChain # type: ignore
+from langchain_community.llms import Ollama # type: ignore
 
 #load envirment variable
 load_dotenv(r"C:\Users\uniba\McqGen\.env")
 KEY=os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 #Using LLM Model from HuggingFaceHub
-llm=HuggingFaceHub(
-    repo_id = "google/gemma-3-270m",
-    model_kwargs={"temperature": 0.7, "max_length": 800},
-    huggingfacehub_api_token=KEY
-)
+llm = Ollama(model="tinyllama")
 
 #Template for input prompt
 Template="""
@@ -50,6 +47,7 @@ Respond *only* in valid JSON that matches this exact skeleton:
 - Vary question openings: “Which statement…”, “What would happen if…”, “Identify the…”, etc.
 
 Deliver a JSON array that a program can parse immediately—no extra commentary.
+*IMPORTANT:** Respond *ONLY* in valid JSON. Do not include any text, explanation, or formatting outside the JSON object.
 """""""""
 
 #Input Prompt
@@ -87,3 +85,4 @@ generate_evaluate_chain=SequentialChain(
     output_variables=["quiz", "review"],
     verbose=True
 )
+
